@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Auto Prompt Manager Studio</title>
+    <link rel="manifest" href="manifest.webmanifest">
+    <script>
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('sw.js').then((reg) => {
+            console.log('Service Worker registered successfully:', reg.scope);
+          }).catch((err) => {
+            console.log('Service Worker registration failed:', err);
+          });
+        });
+      }
+    </script>
+    <style>
+        body { font-family: Arial, sans-serif; background: #f3f4f6; margin: 0; padding: 20px; color: #1f2937; }
+        .container { max-width: 800px; margin: auto; background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        h1 { color: #4f46e5; text-align: center; }
+        .section { margin-bottom: 25px; padding: 15px; border: 1px solid #e5e7eb; border-radius: 8px; background: #fafafa; }
+        label { font-weight: bold; display: block; margin-bottom: 8px; }
+        input, select, textarea { width: 100%; padding: 10px; margin-bottom: 10px; border: 1px solid #d1d5db; border-radius: 6px; box-sizing: border-box; }
+        button { background: #4f46e5; color: white; border: none; padding: 12px 20px; border-radius: 6px; cursor: pointer; font-weight: bold; width: 100%; }
+        button:hover { background: #4338ca; }
+        .install-banner { display: none; background: #e0e7ff; color: #3730a3; padding: 12px; border-radius: 8px; margin-bottom: 20px; text-align: center; font-weight: bold; cursor: pointer; border: 1px solid #c7d2fe; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div id="installBanner" class="install-banner">💻 Click here to Install Laptop App</div>
+        <h1>Universal Auto Prompt Manager Studio</h1>
+        
+        <div class="section">
+            <label>📂 Upload Excel / CSV File:</label>
+            <input type="file" id="excelFile" accept=".xlsx, .csv">
+        </div>
+
+        <div class="section">
+            <label>📁 Select Character / Media Folder:</label>
+            <input type="file" id="mediaFolder" webkitdirectory directory multiple>
+        </div>
+
+        <div class="section">
+            <label>💬 Universal Master Prompt:</label>
+            <textarea rows="3" placeholder="Enter global master prompt here..."></textarea>
+        </div>
+
+        <button onclick="alert('Settings Saved Locally!')">Save Configuration & Ready</button>
+    </div>
+
+    <script>
+      let deferredPrompt;
+      window.addEventListener('beforeinstallprompt', (e) => {
+        e.preventDefault();
+        deferredPrompt = e;
+        const banner = document.getElementById('installBanner');
+        if (banner) {
+          banner.style.display = 'block';
+          banner.addEventListener('click', () => {
+            deferredPrompt.prompt();
+            deferredPrompt.userChoice.then((choiceResult) => {
+              if (choiceResult.outcome === 'accepted') {
+                console.log('User accepted the install prompt');
+              }
+              deferredPrompt = null;
+            });
+          });
+        }
+      });
+    </script>
+</body>
+</html>
